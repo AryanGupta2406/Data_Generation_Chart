@@ -1,0 +1,377 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+
+  <script src="index.js"></script>
+</body>
+</html> -->
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chart Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+
+  <script>
+    // Fetch data from the server
+    fetch('/api/data')
+      .then((response) => response.json())
+      .then((data) => {
+        // Prepare data for chart
+        const labels = data.map((item) => item.timestamp);
+        const values = data.map((item) => item.value);
+
+        // Create a chart using Chart.js
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Sensor Data',
+                data: values,
+                fill: false,
+                borderColor: 'blue',
+                tension: 0.1,
+              },
+            ],
+          },
+        });
+      })
+      .catch((error) => console.error(error));
+  </script>
+</body>
+</html> -->
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chart Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Connect to the server using Socket.IO
+    const socket = io();
+
+    // Create a chart using Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Sensor Data',
+            data: [],
+            fill: false,
+            borderColor: 'blue',
+            tension: 0.1,
+          },
+        ],
+      },
+    });
+
+    // Update chart with new data
+    socket.on('data', (data) => {
+      chart.data.labels.push(data.timestamp);
+      chart.data.datasets[0].data.push(data.value);
+      chart.update();
+    });
+  </script>
+</body>
+</html> -->
+
+
+<!-- storing it in csv and appending data after reading it-->
+
+ 
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Chart Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Connect to the server using Socket.IO
+    const socket = io();
+
+    // Create a chart using Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Temperature',
+            data: [],
+            fill: false,
+            borderColor: 'red',
+            tension: 0.1,
+          },
+          {
+            label: 'Humidity',
+            data: [],
+            fill: false,
+            borderColor: 'blue',
+            tension: 0.1,
+          },
+          {
+            label: 'Pressure',
+            data: [],
+            fill: false,
+            borderColor: 'green',
+            tension: 0.1,
+          },
+        ],
+      },
+    });
+
+    // Load data from the server upon page load
+    fetch('/api/data')
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach((item) => {
+          chart.data.labels.push(item.timestamp);
+          chart.data.datasets[0].data.push(item.temperature);
+          chart.data.datasets[1].data.push(item.humidity);
+          chart.data.datasets[2].data.push(item.pressure);
+        });
+        chart.update();
+      });
+
+    // Update chart with new data
+    socket.on('data', (data) => {
+      chart.data.labels.push(data.timestamp);
+      chart.data.datasets[0].data.push(data.temperature);
+      chart.data.datasets[1].data.push(data.humidity);
+      chart.data.datasets[2].data.push(data.pressure);
+      chart.update();
+    });
+  </script>
+</body>
+</html>  -->
+
+
+
+
+
+
+
+<!-- Showing only the latest data and remmoving the previous data-->
+
+
+<!DOCTYPE html> 
+<html>
+<head>
+  <title>Chart Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Connect to the server using Socket.IO
+    const socket = io();
+
+    const maxDataPoints = 10; // Maximum number of data points to display
+
+    // Create a chart using Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Temperature',
+            data: [],
+            fill: false,
+            borderColor: 'red',
+            tension: 0.1,
+          },
+          {
+            label: 'Humidity',
+            data: [],
+            fill: false,
+            borderColor: 'blue',
+            tension: 0.1,
+          },
+          {
+            label: 'Pressure',
+            data: [],
+            fill: false,
+            borderColor: 'green',
+            tension: 0.1,
+          },
+        ],
+      },
+    });
+
+    // Load data from the server upon page load
+    fetch('/api/data')
+      .then((response) => response.json())
+      .then((data) => {
+        const latestData = data.slice(-maxDataPoints); // Get the latest data points
+        latestData.forEach((item) => {
+          chart.data.labels.push(item.timestamp);
+          chart.data.datasets[0].data.push(item.temperature);
+          chart.data.datasets[1].data.push(item.humidity);
+          chart.data.datasets[2].data.push(item.pressure);
+        });
+        chart.update();
+      });
+
+    // Update chart with new data
+    socket.on('data', (data) => {
+      chart.data.labels.push(data.timestamp);
+      chart.data.datasets[0].data.push(data.temperature);
+      chart.data.datasets[1].data.push(data.humidity);
+      chart.data.datasets[2].data.push(data.pressure);
+
+      // Remove old data points if the maximum limit is exceeded
+      if (chart.data.labels.length > maxDataPoints) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+        chart.data.datasets[1].data.shift();
+        chart.data.datasets[2].data.shift();
+      }
+      
+      chart.update();
+    });
+  </script>
+</body>
+</html> -->
+
+
+
+
+
+<!-- Showing only the latest data and remmoving the previous data and also have option to see previous data-->
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Chart Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+  <button onclick="loadPreviousData()">Load Previous Data</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Connect to the server using Socket.IO
+    const socket = io();
+
+    const maxDataPoints = 10; // Maximum number of data points to display
+
+    // Create a chart using Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Temperature',
+            data: [],
+            fill: false,
+            borderColor: 'red',
+            tension: 0.1,
+          },
+          {
+            label: 'Humidity',
+            data: [],
+            fill: false,
+            borderColor: 'blue',
+            tension: 0.1,
+          },
+          {
+            label: 'Pressure',
+            data: [],
+            fill: false,
+            borderColor: 'green',
+            tension: 0.1,
+          },
+        ],
+      },
+    });
+
+    // Function to load previous data from the server
+    function loadPreviousData() {
+      fetch('/api/previous-data')
+        .then((response) => response.json())
+        .then((data) => {
+          chart.data.labels = [];
+          chart.data.datasets[0].data = [];
+          chart.data.datasets[1].data = [];
+          chart.data.datasets[2].data = [];
+
+          data.forEach((item) => {
+            chart.data.labels.push(item.timestamp);
+            chart.data.datasets[0].data.push(item.temperature);
+            chart.data.datasets[1].data.push(item.humidity);
+            chart.data.datasets[2].data.push(item.pressure);
+          });
+          chart.update();
+        });
+    }
+
+    // Load data from the server upon page load
+    fetch('/api/data')
+      .then((response) => response.json())
+      .then((data) => {
+        const latestData = data.slice(-maxDataPoints); // Get the latest data points
+        latestData.forEach((item) => {
+          chart.data.labels.push(item.timestamp);
+          chart.data.datasets[0].data.push(item.temperature);
+          chart.data.datasets[1].data.push(item.humidity);
+          chart.data.datasets[2].data.push(item.pressure);
+        });
+        chart.update();
+      });
+
+    // Update chart with new data
+    socket.on('data', (data) => {
+      chart.data.labels.push(data.timestamp);
+      chart.data.datasets[0].data.push(data.temperature);
+      chart.data.datasets[1].data.push(data.humidity);
+      chart.data.datasets[2].data.push(data.pressure);
+      
+
+      // Remove old data points if the maximum limit is exceeded
+      if (chart.data.labels.length > maxDataPoints) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+        chart.data.datasets[1].data.shift();
+        chart.data.datasets[2].data.shift();
+      }
+
+      chart.update();
+    });
+  </script>
+</body>
+</html> -->
